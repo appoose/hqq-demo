@@ -4,7 +4,7 @@ import json
 import GPUtil
 import time
 import plotly.express as px
-
+import datetime
 from streamlit_autorefresh import st_autorefresh
 
 
@@ -17,6 +17,10 @@ headers = {"Content-Type": "application/json"}
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+# Initialize GPU data list in session state
+if 'gpu_data_history' not in st.session_state:
+    st.session_state.gpu_data_history = []
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
@@ -59,20 +63,27 @@ if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me 
         message_placeholder.markdown(full_response)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-if st.button('Refresh GPU Info'):
-    gpu_info = get_gpu_info()
-    for gpu in gpu_info:
-        st.write(f"GPU {gpu['id']}: {gpu['name']}")
-        st.write(f"Load: {gpu['load']}")
-        st.write(f"Memory Usage: {gpu['used memory']} / {gpu['total memory']}")
-        st.write(f"Temperature: {gpu['temperature']}")
-        
 
 
 # GPU info update
+refresh_rate = 2  # Refresh rate in seconds
 if st_autorefresh(interval=refresh_rate * 1000, key="gpu_info_refresh"):
-    gpu_data = get_gpu_info()
-    fig = px.bar(gpu_data, x='GPU', y='Memory Used (MB)',
-                 labels={'GPU': 'GPU', 'Memory Used (MB)': 'Memory Usage (MB)'},
-                 title='GPU Memory Usage')
+    current_gpu_data = get_gpu_info()
+    timestamp = datetime.datetime.now()  # Get current time
+
+    # Append current data with timestamp to the history
+    for gpu in current_gpu_data:
+        st.session_state.gpu_data_history.append({
+            'Time': timestamp,
+            'GPU': gpu['GPU'],
+            'Memory Used (MB)': gpu['Memory Used (MB)']
+        })
+
+    # Convert the data history to a DataFrame
+    df_gpu_data = pd.DataFrame(st.session_state.gpu_data_history)
+
+    # Plot the evolving time series
+    fig = px.line(df_gpu_data, x='Time', y='Memory Used (MB)', color='GPU',
+                  labels={'Memory Used (MB)': 'Memory Usage (MB)'},
+                  title='GPU Memory Usage Over Time')
     gpu_chart.plotly_chart(fig, use_container_width=True)
