@@ -6,7 +6,7 @@ import time
 import plotly.express as px
 import datetime
 from streamlit_autorefresh import st_autorefresh
-
+import pandas as pd
 
 
 st.title("HQQ model demos")
