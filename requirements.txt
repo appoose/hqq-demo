@@ -1,0 +1,9 @@
+git+https://github.com/mobiusml/hqq.git
+accelerate
+timm
+open_clip_torch
+pillow
+fastapi
+uvicorn
+requests
+pydantic 
