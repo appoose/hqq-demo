@@ -3,6 +3,9 @@ import requests
 import json 
 import GPUtil
 import time
+from streamlit_autorefresh import st_autorefresh
+
+
 
 st.title("HQQ model demos")
 base_url = "https://a55fd6b38dc5.ngrok.app"
