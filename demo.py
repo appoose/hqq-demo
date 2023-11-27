@@ -19,12 +19,12 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # @st.cache(allow_output_mutation=True)
-@st.cache_data
-def get_gpu_data_history():
-    return []
+# @st.cache_data
+# def get_gpu_data_history():
+#     return []
 
 # Initialize or get the cached GPU data history
-gpu_data_history = get_gpu_data_history()
+# gpu_data_history = get_gpu_data_history()
 # Function to fetch and append current GPU info
 
 # Display chat messages from history on app rerun
@@ -33,27 +33,27 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 
-def get_gpu_info():
-    gpus = GPUtil.getGPUs()
-    return [{'GPU': gpu.id, 'Memory Used (MB)': gpu.memoryUsed} for gpu in gpus]
+# def get_gpu_info():
+#     gpus = GPUtil.getGPUs()
+#     return [{'GPU': gpu.id, 'Memory Used (MB)': gpu.memoryUsed} for gpu in gpus]
 
-def append_current_gpu_info():
-    current_gpu_data = get_gpu_info()
-    timestamp = datetime.datetime.now()  # Get current time
+# def append_current_gpu_info():
+#     current_gpu_data = get_gpu_info()
+#     timestamp = datetime.datetime.now()  # Get current time
 
-    for gpu in current_gpu_data:
-        gpu_data_history.append({
-            'Time': timestamp,
-            'GPU': gpu['GPU'],
-            'Memory Used (MB)': gpu['Memory Used (MB)']
-        })
+#     for gpu in current_gpu_data:
+#         gpu_data_history.append({
+#             'Time': timestamp,
+#             'GPU': gpu['GPU'],
+#             'Memory Used (MB)': gpu['Memory Used (MB)']
+#         })
 
 
 # Sidebar for real-time GPU usage
-with st.sidebar:
-    st.title("Real-time GPU Usage")
-    gpu_chart = st.empty()
-    refresh_rate = 2  # Refresh rate in seconds
+# with st.sidebar:
+#     st.title("Real-time GPU Usage")
+#     gpu_chart = st.empty()
+#     refresh_rate = 2  # Refresh rate in seconds
 
 
 # Accept user input
@@ -82,15 +82,15 @@ if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me 
 
 
 
-# GPU info update
-refresh_rate = 2  # Refresh rate in seconds
-if st_autorefresh(interval=refresh_rate * 1000, key="gpu_info_refresh"):
-    append_current_gpu_info()
+# # GPU info update
+# refresh_rate = 2  # Refresh rate in seconds
+# if st_autorefresh(interval=refresh_rate * 1000, key="gpu_info_refresh"):
+#     append_current_gpu_info()
 
-    df_gpu_data = pd.DataFrame(gpu_data_history)
+#     df_gpu_data = pd.DataFrame(gpu_data_history)
 
-    # Plot the evolving time series
-    fig = px.line(df_gpu_data, x='Time', y='Memory Used (MB)', color='GPU',
-                  labels={'Memory Used (MB)': 'Memory Usage (MB)'},
-                  title='GPU Memory Usage Over Time')
-    gpu_chart.plotly_chart(fig, use_container_width=True)
+#     # Plot the evolving time series
+#     fig = px.line(df_gpu_data, x='Time', y='Memory Used (MB)', color='GPU',
+#                   labels={'Memory Used (MB)': 'Memory Usage (MB)'},
+#                   title='GPU Memory Usage Over Time')
+#     gpu_chart.plotly_chart(fig, use_container_width=True)
