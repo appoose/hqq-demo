@@ -21,19 +21,14 @@ for message in st.session_state.messages:
 
 def get_gpu_info():
     gpus = GPUtil.getGPUs()
-    list_gpus = []
-    for gpu in gpus:
-        gpu_info = {
-            'id': gpu.id,
-            'name': gpu.name,
-            'load': f"{gpu.load*100}%",
-            'free memory': f"{gpu.memoryFree}MB",
-            'used memory': f"{gpu.memoryUsed}MB",
-            'total memory': f"{gpu.memoryTotal}MB",
-            'temperature': f"{gpu.temperature} °C"
-        }
-        list_gpus.append(gpu_info)
-    return list_gpus
+    return [{'GPU': gpu.id, 'Memory Used (MB)': gpu.memoryUsed} for gpu in gpus]
+
+# Sidebar for real-time GPU usage
+with st.sidebar:
+    st.title("Real-time GPU Usage")
+    gpu_chart = st.empty()
+    refresh_rate = 2  # Refresh rate in seconds
+
 
 # Accept user input
 if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me a Dad joke ) "):
@@ -69,3 +64,10 @@ if st.button('Refresh GPU Info'):
         
 
 
+# GPU info update
+if st_autorefresh(interval=refresh_rate * 1000, key="gpu_info_refresh"):
+    gpu_data = get_gpu_info()
+    fig = px.bar(gpu_data, x='GPU', y='Memory Used (MB)',
+                 labels={'GPU': 'GPU', 'Memory Used (MB)': 'Memory Usage (MB)'},
+                 title='GPU Memory Usage')
+    gpu_chart.plotly_chart(fig, use_container_width=True)

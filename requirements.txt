@@ -8,3 +8,5 @@ uvicorn
 requests
 pydantic 
 GPUtil
+plotly
+streamlit-autorefresh
