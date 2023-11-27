@@ -18,9 +18,13 @@ headers = {"Content-Type": "application/json"}
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Initialize GPU data list in session state
-if 'gpu_data_history' not in st.session_state:
-    st.session_state.gpu_data_history = []
+@st.cache(allow_output_mutation=True)
+def get_gpu_data_history():
+    return []
+
+# Initialize or get the cached GPU data history
+gpu_data_history = get_gpu_data_history()
+# Function to fetch and append current GPU info
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
@@ -31,6 +35,18 @@ for message in st.session_state.messages:
 def get_gpu_info():
     gpus = GPUtil.getGPUs()
     return [{'GPU': gpu.id, 'Memory Used (MB)': gpu.memoryUsed} for gpu in gpus]
+
+def append_current_gpu_info():
+    current_gpu_data = get_gpu_info()
+    timestamp = datetime.datetime.now()  # Get current time
+
+    for gpu in current_gpu_data:
+        gpu_data_history.append({
+            'Time': timestamp,
+            'GPU': gpu['GPU'],
+            'Memory Used (MB)': gpu['Memory Used (MB)']
+        })
+
 
 # Sidebar for real-time GPU usage
 with st.sidebar:
@@ -68,18 +84,8 @@ if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me 
 # GPU info update
 refresh_rate = 2  # Refresh rate in seconds
 if st_autorefresh(interval=refresh_rate * 1000, key="gpu_info_refresh"):
-    current_gpu_data = get_gpu_info()
-    timestamp = datetime.datetime.now()  # Get current time
+    append_current_gpu_info()
 
-    # Append current data with timestamp to the history
-    for gpu in current_gpu_data:
-        st.session_state.gpu_data_history.append({
-            'Time': timestamp,
-            'GPU': gpu['GPU'],
-            'Memory Used (MB)': gpu['Memory Used (MB)']
-        })
-
-    # Convert the data history to a DataFrame
     df_gpu_data = pd.DataFrame(st.session_state.gpu_data_history)
 
     # Plot the evolving time series
