@@ -3,6 +3,8 @@ import requests
 import json 
 import GPUtil
 import time
+import plotly.express as px
+
 from streamlit_autorefresh import st_autorefresh
 
 
