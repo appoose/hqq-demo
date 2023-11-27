@@ -32,19 +32,23 @@ async def startup_event():
         hf_login(token=hf_token)    
     global model_visual, model_chat, tokenizer_chat, tokenizer_visual
     try:
-        model_visual = ViTHQQ.from_quantized("mobiuslabsgmbh/CLIP-ViT-H-14-laion2B-2bit_g16_s128-HQQ")
-        orig_model, _ , preprocess = open_clip.create_model_and_transforms('ViT-H-14', pretrained='laion2B-s32B-b79K')
+        
+        # model_visual = ViTHQQ.from_quantized("mobiuslabsgmbh/Llama-2-13b-chat-hf-4bit_g64-HQQ")        
+        # model_visual = ViTHQQ.from_quantized("mobiuslabsgmbh/CLIP-ViT-H-14-laion2B-2bit_g16_s128-HQQ")
+        # orig_model, _ , preprocess = open_clip.create_model_and_transforms('ViT-H-14', pretrained='laion2B-s32B-b79K')
 
-        tokenizer_visual  = open_clip.get_tokenizer('ViT-H-14')
-        model_text = orig_model.encode_text
+        # tokenizer_visual  = open_clip.get_tokenizer('ViT-H-14')
+        # model_text = orig_model.encode_text
 
-        model_id  = 'mobiuslabsgmbh/Llama-2-70b-chat-hf-2bit_g16_s128-HQQ'
+        # model_id  = 'mobiuslabsgmbh/Llama-2-70b-chat-hf-2bit_g16_s128-HQQ'
+        model_id = "mobiuslabsgmbh/Llama-2-13b-chat-hf-4bit_g64-HQQ"
         #Load the tokenizer
         tokenizer_chat = AutoTokenizer.from_pretrained(model_id)
         tokenizer_chat.use_default_system_prompt = False
 
         #Load the model
         model_chat     = LlamaHQQ.from_quantized(model_id)
+        model_chat = torch.compile(model_chat)
 
 
     except:
@@ -137,8 +141,6 @@ def process_conversation(prompt):
 @app.post("/chat/")
 async def chat(input: ChatPromptInput) -> dict:
     async def event_stream():
-        gc.collect()
-        torch.cuda.empty_cache()        
         streamer = TextIteratorStreamer(tokenizer_chat, 
                                         timeout=10.0, 
                                         skip_prompt=True, 

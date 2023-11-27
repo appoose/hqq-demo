@@ -3,8 +3,8 @@ import requests
 import json 
 import asyncio 
 
-st.title("HQQ 2-bit model demos")
-base_url = "https://519a-66-23-193-2.ngrok-free.app"
+st.title("HQQ model demos")
+base_url = "https://a55fd6b38dc5.ngrok.app"
 chat_url  = f"{base_url}/chat/"
 headers = {"Content-Type": "application/json"}
 
@@ -18,7 +18,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Accept user input
-if prompt := st.chat_input("LLama-70-B 2-Bit Quantized model: AMA"):
+if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me a Dad joke ) "):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     # Display user message in chat message container
