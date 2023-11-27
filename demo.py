@@ -18,7 +18,8 @@ headers = {"Content-Type": "application/json"}
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-@st.cache(allow_output_mutation=True)
+# @st.cache(allow_output_mutation=True)
+@st.cache_data
 def get_gpu_data_history():
     return []
 
@@ -86,7 +87,7 @@ refresh_rate = 2  # Refresh rate in seconds
 if st_autorefresh(interval=refresh_rate * 1000, key="gpu_info_refresh"):
     append_current_gpu_info()
 
-    df_gpu_data = pd.DataFrame(st.session_state.gpu_data_history)
+    df_gpu_data = pd.DataFrame(gpu_data_history)
 
     # Plot the evolving time series
     fig = px.line(df_gpu_data, x='Time', y='Memory Used (MB)', color='GPU',
