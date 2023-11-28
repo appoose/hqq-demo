@@ -39,12 +39,15 @@ if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me 
         message_placeholder = st.empty()
         full_response = ""
 
-
-        chat_response = requests.post(chat_url,
-                                headers=headers,
-                                data=json.dumps(st.session_state.messages),
-                                # data=json.dumps({"prompt":prompt}),
-                                stream=True)
+        try:
+            chat_response = requests.post(chat_url,
+                                    headers=headers,
+                                    data=json.dumps({"messages": st.session_state.messages}),
+                                    # data=json.dumps({"prompt":prompt}),
+                                    stream=True)
+            chat_response.raise_for_status()  # This will raise an exception for HTTP errors
+        except Exception as e: 
+            st.error(f"Error : {e}")
 
 
         for line in chat_response:            
