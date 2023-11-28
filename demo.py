@@ -9,7 +9,7 @@ from streamlit_autorefresh import st_autorefresh
 import pandas as pd
 
 
-st.title("HQQ model demos")
+# st.title("HQQ model demos")
 base_url = "https://a55fd6b38dc5.ngrok.app"
 chat_url  = f"{base_url}/chat/"
 headers = {"Content-Type": "application/json"}
