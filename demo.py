@@ -42,7 +42,7 @@ if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me 
 
         chat_response = requests.post(chat_url,
                                 headers=headers,
-                                data=json.dumps(st.session_state.messages)
+                                data=json.dumps(st.session_state.messages),
                                 # data=json.dumps({"prompt":prompt}),
                                 stream=True)
 
