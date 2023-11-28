@@ -1,10 +1,10 @@
 import streamlit as st
 import requests
 import json 
-import GPUtil
-import time
+# import GPUtil
+# import time
 import plotly.express as px
-import datetime
+# import datetime
 from streamlit_autorefresh import st_autorefresh
 import pandas as pd
 
@@ -18,15 +18,6 @@ headers = {"Content-Type": "application/json"}
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# @st.cache(allow_output_mutation=True)
-# @st.cache_data
-# def get_gpu_data_history():
-#     return []
-
-# Initialize or get the cached GPU data history
-# gpu_data_history = get_gpu_data_history()
-# Function to fetch and append current GPU info
-
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
@@ -36,7 +27,10 @@ for message in st.session_state.messages:
 # Accept user input
 if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me a Dad joke ) "):
     # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
+
+     
+    st.session_state.messages.append({"role": "user", 
+                                      "content": prompt})
     # Display user message in chat message container
     with st.chat_message("user"):
         st.markdown(prompt)
@@ -44,9 +38,12 @@ if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me 
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
+
+
         chat_response = requests.post(chat_url,
                                 headers=headers,
-                                data=json.dumps({"prompt":prompt}),
+                                data=json.dumps(st.session_state.messages)
+                                # data=json.dumps({"prompt":prompt}),
                                 stream=True)
 
 
@@ -55,7 +52,12 @@ if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me 
                 full_response += (line.decode('utf-8') or "")
                 message_placeholder.markdown(full_response + "▌")
         message_placeholder.markdown(full_response)
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+    st.session_state.messages.append({"role": "assistant", 
+                                      "content": full_response})
+
+
+
+
 
 
 

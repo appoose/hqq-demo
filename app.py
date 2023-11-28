@@ -77,6 +77,13 @@ class ChatPromptInput(BaseModel):
     prompt: str
     other_info : Optional[str]
 
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+class Chat(BaseModel):
+    messages: List[ChatMessage]
+
 
 def print_flush(data):
     stdout.write("\r" + data)
@@ -123,30 +130,32 @@ def classifier_zero_shot_with_pil(img, classes):
     return out
 
 #Adapted from https://huggingface.co/spaces/huggingface-projects/llama-2-7b-chat/blob/main/app.py
-def process_conversation(prompt):    
+def process_conversation(chat_messages):    
     system_prompt = "You are a helpful assistant."
-    chat_history  = []
-    message       = prompt
+    # chat_history  = []
+    # message       = prompt
 
     conversation = []
     if system_prompt:
         conversation.append({"role": "system", "content": system_prompt})
-    for user, assistant in chat_history:
-        conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
-    conversation.append({"role": "user", "content": message})
+        conversation.extend(chat_messages)
+
+    # for user, assistant in chat_history:
+    #     conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
+    # conversation.append({"role": "user", "content": message})
 
     return tokenizer_chat.apply_chat_template(conversation, return_tensors="pt").to('cuda')
 
 
 @app.post("/chat/")
-async def chat(input: ChatPromptInput) -> dict:
+async def chat(chat_messages: Chat) -> dict:
     async def event_stream():
         streamer = TextIteratorStreamer(tokenizer_chat, 
                                         timeout=10.0, 
                                         skip_prompt=True, 
                                         skip_special_tokens=True)
         generate_kwargs = dict(
-            {"input_ids": process_conversation(input.prompt)},
+            {"input_ids": process_conversation(chat_messages)},
             streamer=streamer,
             max_new_tokens=1000,
             do_sample=False,
