@@ -154,8 +154,9 @@ async def chat(chat_messages: Chat) -> dict:
                                         timeout=10.0, 
                                         skip_prompt=True, 
                                         skip_special_tokens=True)
+        print(chat_messages)
         generate_kwargs = dict(
-            {"input_ids": process_conversation(chat_messages)},
+            {"input_ids": process_conversation(chat_messages.messages)},
             streamer=streamer,
             max_new_tokens=1000,
             do_sample=False,
