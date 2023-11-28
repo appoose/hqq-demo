@@ -131,7 +131,7 @@ def classifier_zero_shot_with_pil(img, classes):
 
 #Adapted from https://huggingface.co/spaces/huggingface-projects/llama-2-7b-chat/blob/main/app.py
 def process_conversation(chat_messages):    
-    system_prompt = "You are a helpful assistant."
+    system_prompt = "You are a helpful assistant tasked with providing short and concise answers, each not exceeding 128 tokens in length."
     # chat_history  = []
     # message       = prompt
 
@@ -158,7 +158,7 @@ async def chat(chat_messages: Chat) -> dict:
         generate_kwargs = dict(
             {"input_ids": process_conversation(chat_messages.messages)},
             streamer=streamer,
-            max_new_tokens=1000,
+            max_new_tokens=128,
             do_sample=False,
             top_p=0.90,
             top_k=50,
