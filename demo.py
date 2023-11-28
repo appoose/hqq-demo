@@ -33,29 +33,6 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 
-# def get_gpu_info():
-#     gpus = GPUtil.getGPUs()
-#     return [{'GPU': gpu.id, 'Memory Used (MB)': gpu.memoryUsed} for gpu in gpus]
-
-# def append_current_gpu_info():
-#     current_gpu_data = get_gpu_info()
-#     timestamp = datetime.datetime.now()  # Get current time
-
-#     for gpu in current_gpu_data:
-#         gpu_data_history.append({
-#             'Time': timestamp,
-#             'GPU': gpu['GPU'],
-#             'Memory Used (MB)': gpu['Memory Used (MB)']
-#         })
-
-
-# Sidebar for real-time GPU usage
-# with st.sidebar:
-#     st.title("Real-time GPU Usage")
-#     gpu_chart = st.empty()
-#     refresh_rate = 2  # Refresh rate in seconds
-
-
 # Accept user input
 if prompt := st.chat_input("LLama-13-B 4-Bit Quantized model: AMA ( eg: Tell me a Dad joke ) "):
     # Add user message to chat history
