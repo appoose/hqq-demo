@@ -5,8 +5,8 @@ from transformers import (
     TextIteratorStreamer
 )
 
-from hqq.core.quantize import HQQLinear, HQQBackend
-HQQLinear.backend = HQQBackend.PYTORCH_COMPILE 
+# from hqq.core.quantize import HQQLinear, HQQBackend
+# HQQLinear.backend = HQQBackend.PYTORCH_COMPILE 
 
 from hqq.models.vit_timm import ViTHQQ
 from hqq.models.llama_hf import LlamaHQQ
