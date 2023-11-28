@@ -1,4 +1,4 @@
-git+https://github.com/mobiusml/hqq.git
+git+https://github.com/mobiusml/hqq.git@develop
 accelerate
 timm
 open_clip_torch
